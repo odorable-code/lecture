@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>과제</title>
+</head>
+<body>
+	<script>
+		/*
+	  정수를 입력받아 (prompt) 2, 3, 6의 배수를 판별하여 알림(alert)으로 알려는주는 코드를 작성하세요. 
+		예 : 2를 입력 => 2는 2의 배수입니다.
+		예 : 3을 입력 => 3은 3의 배수입니다.
+		예 : 6을 입력 => 6은 6의 배수입니다.
+		예 : 5를 입력 => 5는 2,3,6 배수가 아닙니다.
+		*/
+		function getMultiple(n) {
+				let msg = "";
+				if (n % 2 == 0) { msg += "2의 배수입니다.\n" }
+				if (n % 3 == 0) { msg += "3의 배수입니다.\n" }
+				if (n % 6 == 0) { msg += "6의 배수입니다.\n" }
+				if (msg === "") { msg += "2,3,6의 배수가 아닙니다.\n" }
+				return `${n}(은/는) ${msg}`;
+		}
+
+		let num = parseInt(prompt("정수 입력"));
+		alert(getMultiple(num));
+
+
+		/*
+	  정수를 입력받아 (prompt) 입력받은 정수가 소수인지 아닌지 알림(alert)으로 알려주는 코드를 작성
+		소수: 약수가 1과 자기자신인 수
+		약수: 나누어 떨어지는 수; 12의 약수: 1, 2, 3, 4, 6, 12
+		대표적인 소수들: 2, 3, 5, 7, 11, 13, 17, 19....
+		입력한 값을 num에 저장했다고 가정
+		반복횟수: i는 1부터 num까지 1씩 증가
+		규칙성: i가 num의 약수이면 약수의 갯수를 1 증가
+		=> 약수를 어떻게 풀어쓸 것인가
+		반복문 종료 후: 약수의 개수가 2개이면 소수라고 출력, 아니면 소수가 아니라고 출력.
+		*/
+		function isPrime(num) {
+			if (num < 2) return false;
+			for (let i = 2; i * i <= num; i++) {
+				if (num % i === 0) return false; // 나누어 떨어지면 소수가 아님
+			}
+			return true;
+		}
+
+		let num2 = parseInt(prompt("정수 입력"));
+		alert(`${num2}는 ${isPrime(num2)? "소수입니다" : "소수가 아닙니다"}`);
+
+		/*
+		A의 배수: 어떤 수를 A로 나누었을때 나머지가 0인 수
+			-	12의 배수: 12, 24, 36, ....
+		A의 약수: A를 어떤수로 나누었을 때 나머지가 0인 수
+			- 12의 약수: 1, 2, 3, 4, 6, 12	
+	 */
+	</script>
+</body>
+</html>
