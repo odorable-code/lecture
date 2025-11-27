@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>요소 추가 연습 예제</title>
+</head>
+<body>
+	<form action="" id="form">
+		<input type="text" id="text" placeholder="좋아하는 과일을 입력하세요">
+		<button id="btn" type="submit">등록</button>
+	</form>
+	<ul id="list">
+		
+	</ul>
+	<script> 
+	/*
+	텍스트 입력 후 버튼을 클릭하면 입력된 분구가 리스트에 추가 되도록 작성하시오 
+	*/
+
+	// input 태그 요소 선택
+	const text = document.querySelector('#text');
+	// ul태그 요소 선택
+	const list = document.querySelector('#list');
+	// form 태그 요소 선택
+	const form = document.querySelector('#form');
+
+	// 입력 후 엔터를르 쳐도 이벤트가 발생하게 하기 위해 추가된 작업
+	form.addEventListener('submit', function(event) {
+		// 각 태그에 있는 효과를 막아줌
+		event.preventDefault();
+		// input 태그에 입력된 텍스트를 가져옴
+		if (text.value.trim() === "") {
+			return;
+		}
+		// ul 태그에 기존 HTML 코드 뒤에 li태그를 추가 (입력된 텍스트를 이용)
+		list.innerHTML += `<li>${text.value}</li>\n`;
+		text.value = '';
+	});
+	</script>
+</body>
+</html>
