@@ -1,7 +1,5 @@
 package day01;
 
-import java.util.Arrays;
-
 public class EX05_VariableTest {
     public static void main(String[] args) {
         /* 학생의 국어, 영어, 수학 성적을 저장하기 위한 변수를 선언하세요.
@@ -24,3 +22,4 @@ public class EX05_VariableTest {
         char grade;
     }
 }
+
