@@ -1,6 +1,6 @@
-package day02;
+package homework;
 
-public class HW02_Star {
+public class HW03_Star {
     public static void main(String[] args) {
         /* 다음 샘플코드를 참고하여 아래와 같이 출력 되도록 코드를 작성하세요. */
         int rows = 5, cols = 5;

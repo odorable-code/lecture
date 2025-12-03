@@ -1,8 +1,8 @@
-package day01;
+package homework;
 
 import java.util.Scanner;
 
-public class EX15_HomeWork {
+public class HW01_Score {
     public static void main(String[] args) {
         /*
          * 성적을 입력받아 성적에 맞는 학점을 출력하는 코드를 작성하세요 switch문을 이용하여 작성
