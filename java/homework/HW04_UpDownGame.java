@@ -16,7 +16,8 @@ public class HW04_UpDownGame {
          *  정수 입력 : 33
          *  정답입니다!
          */
-        int answer = (int) (Math.random() * 100 + 1);
+        int min = 1, max = 100;
+        int answer = (int) (Math.random() * (max - min + 1) + 1);
         Scanner input = new Scanner(System.in);
         System.out.println("정답 : " + answer);
         while (true) {

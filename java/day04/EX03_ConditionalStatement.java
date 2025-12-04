@@ -62,7 +62,7 @@ public class EX03_ConditionalStatement {
 		boolean 졸업작품여부 = false;
 		
 		/* 이수학점이 졸업학점 미만이면 졸업 실패
-		 * 아니면(졸업학점 이상이면) 졸업작품을 했으면 졸업
+		 " 아니면(졸업학점 이상이면) 졸업작품을 했으면 졸업
 		 * 아니면 졸업 실패라고 출력하도록 조건문을 작성
 		 * */
 		if(이수학점 < 졸업학점) {
@@ -74,6 +74,35 @@ public class EX03_ConditionalStatement {
 		else {
 			System.out.println("졸업 실패");
 		}
+        /* switch문
+         * - 언제 서용?
+         *  - if문에서 각 조건문이 변수 ==값형태로 되어있는데 변수가 고정인 경우 사용
+         * - 왜 사용?
+         *  - if문 보다 구조가 간결
+         * - 문법
+         * switch (변수) {
+         * case 값1:      if (변수 == 값1)
+         *      실행문1;
+         *      break;
+         * case 값2:     else if (변수 == 값2)
+         *      실행문2;
+         *      break;
+         * default:     else
+k        *      실행문3;
+         * }
+         *
+         * - 주의사항
+         *   - 값에는 상수와 리터럴만 올 수 있음   =
+         *   - 값은 문자(''), 정수, 문자열("")만 가능 (실수X)
+         */
+
+        // 문자가 산술연산자라면 산술연사자입니다라고 출력하는 예제
+        char ch = '+';
+        switch(ch) {
+            case '+':
+                System.out.println(ch );
+                break;
+        }
 	}
 
 }
