@@ -1,5 +1,7 @@
 package homework;
 
+import java.util.Scanner;
+
 public class HW08_BaseballGame {
 
 	public static void main(String[] args) {
@@ -22,7 +24,55 @@ public class HW08_BaseballGame {
 		 * 입력 : 1 5 4
 		 * 정답입니다.
 		 * */
-
+        // 답 생성
+        int [] answer = generateAnswer();
+        Scanner scan = new Scanner(System.in);
+        while (true) {
+            int [] userChoice = getUserChoice(scan);
+            int [] ballCount = ballCheck(answer, userChoice);
+            if (isStrikeOut(ballCount)) { break; }
+        }
 	}
 
+    public static int[] getUserChoice(Scanner scan) {
+        int [] userChoice = new int[3];
+        System.out.print("세개의 답을 입력해주세요: ");
+        for (int i = 0; i < 3; i++) {
+            userChoice[i] = scan.nextInt();
+        }
+        return userChoice;
+    }
+    public static int[] generateAnswer() {
+        int [] answer = new int[3];
+        for (int i = 0; i < 3; i++) {
+            answer[i] = (int) (Math.random() * 9 + 1);
+        }
+        return answer;
+    }
+    public static int[] ballCheck(int [] answer, int [] userChoice) {
+        int strike = 0;
+        int ball = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (answer[i] == userChoice[j]) {
+                    if (i == j) { strike++; }
+                    else { ball++; }
+                }
+            }
+        }
+        return new int[]{ strike, ball };
+    }
+
+    public static boolean isStrikeOut(int [] ballCount) {
+        int strike = ballCount[0];
+        int ball = ballCount[1];
+
+        if (strike == 3) {
+            System.out.println("정답입니다!");
+            return true;
+        } else {
+            System.out.println(strike + "S " + ball + "B 입니다.");
+            return false;
+        }
+    }
 }
