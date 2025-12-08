@@ -45,7 +45,15 @@ public class HW08_BaseballGame {
     public static int[] generateAnswer() {
         int [] answer = new int[3];
         for (int i = 0; i < 3; i++) {
-            answer[i] = (int) (Math.random() * 9 + 1);
+            outer: do {
+                answer[i] = (int) (Math.random() * 9 + 1);
+                for (int j = 0; j < i; j++) {
+                    if (answer[i] == answer[j]) {
+                        continue outer;
+                    }
+                }
+                break;
+            } while(true);
         }
         return answer;
     }

@@ -1,5 +1,3 @@
-package homework;
-
 import java.util.Scanner;
 
 public class HW09_BaseballGame2 {
@@ -30,93 +28,199 @@ public class HW09_BaseballGame2 {
          * 3. 종료
          * 메뉴 선택: 1
          */
-        int [] answer = generateAnswer();
-        GameRecord [] records = new GameRecord[5];
         Scanner scan = new Scanner(System.in);
-        int tryingCount = 0;
+        int choice = 0;
+        do {
+            System.out.println("메뉴");
+            System.out.println("1. 플레이");
+            System.out.println("2. 기록확인");
+            System.out.println("3. 종료");
+            System.out.print("메뉴 선택: ");
+
+            choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                    BaseballGame baseballGame = new BaseballGame();
+                    baseballGame.play();
+                    break;
+                case 2:
+                    Ranking.show();
+                    break;
+                case 3:
+                    System.out.println("종료합니다.");
+                    break;
+                default:
+                    System.out.println("잘못 입력했습니다.");
+            }
+        } while(choice != 3);
+    }
+}
+
+class BaseballGame {
+   void play() {
+        System.out.println("플레이볼!");
+        int[] answer = Answer.generateAnswer();
+        int numOfAttempts = 0;
         while (true) {
-            tryingCount++;
-            int [] userChoice = getUserChoice(scan);
-            int [] ballCount = ballCheck(answer, userChoice);
-            if (isStrikeOut(ballCount)) {
-                if (isRankingOn()) {
-                    char [] playerName = getPlayerName(scan);
-                    addRecord(records, playerName, tryingCout);
-                }
+            numOfAttempts++;
+            System.out.print("정답을 입력하세요: ");
+            int[] choice = Player.getChoice();
+            BallCount ballCount = GameLogic.checkBallCount(answer, choice);
+            if (ballCount.strike == 3) {
+                System.out.println("정답입니다.");
+                break;
+            } else {
+                System.out.printf("%dS %dB입니다.\n", ballCount.strike, ballCount.ball);
+            }
+        }
+
+        System.out.println("시도횟수는 " + numOfAttempts + "회");
+        int rank = Ranking.isRankingOn(numOfAttempts);
+        if (rank > -1) {
+            System.out.println(rank + "등 안에 들었습니다.");
+            System.out.print("이니셜을 남겨주세요: ");
+            char[] playerName = Player.getName();
+            Ranking.add(playerName, numOfAttempts);
+            Ranking.show();
+        }
+    }
+}
+
+class Ranking {
+    static Record[] records = new Record[5];
+    static int add(char[] playerName, int numOfAttempts) {
+        Record newRecord = new Record(playerName, numOfAttempts);
+        int rank = 0;
+        for (int i = 0; i < records.length; i++) {
+            Record record = records[i];
+            if (record == null || newRecord.numOfAttempts <= record.numOfAttempts) {
+                rank = i;
                 break;
             }
         }
-    }
 
-    public static char[] getPlayerName(Scanner scan) {
-        System.out.println("이름을 입력해주세요: ");
-        char [] playerName = new char[3];
-        for (int i = 0; i < 3; i++) {
-            playerName[i] = scan.next().charAt(0);
+        for (int i = records.length-2; i >= rank; i--) {
+            records[i+1] = records[i];
         }
-        return playerName;
-    }
-    public static void addRecord(Record [] records, char [] playerName, int tryingCout) {
 
+        records[rank] = newRecord;
+        return rank+1;
     }
-
-    class GameRecord {
-        char[] playerName;
-        int tryingCount;
-        int rank;
-        Record(char [] playerName, int tryingCount, int rank) {
-            this.playerName = playerName;
-            this.tryingCount = tryingCount;
-            this.rank = rank;
+    static int isRankingOn(int numOfAttempts) {
+        int prevNumOfAttempts = 0;
+        int rank = 0;
+        for (int i = 0; i < records.length; i++) {
+            Record record = records[i];
+            if (record == null || numOfAttempts <= record.numOfAttempts) {
+                return rank+1;
+            }
+            if (prevNumOfAttempts != record.numOfAttempts) {
+                rank++;
+            }
+            prevNumOfAttempts = record.numOfAttempts;
         }
-        void print() {
-            System.out.println(rank + ". " + playerName + " - " + tryingCount + "회");
-        }
+        return -1;
     }
 
-    public static boolean isRankingOn(int tryingCount) {
-
-    }
-
-    public static int[] getUserChoice(Scanner scan) {
-        int [] userChoice = new int[3];
-        System.out.print("세개의 답을 입력해주세요: ");
-        for (int i = 0; i < 3; i++) {
-            userChoice[i] = scan.nextInt();
+    static void show() {
+        System.out.println("=========== 순위 ============");
+        int rank = 0;
+        int prevNumOfAttempts = 0;
+        for (int i = 0; i < records.length; i++) {
+            Record r = records[i];
+            if (r == null) {
+                if (i == 0) {
+                    System.out.println("기록이 존재하지 않습니다.");
+                    break;
+                }
+                continue;
+            }
+            if (prevNumOfAttempts != r.numOfAttempts) {
+                rank++;
+            }
+            System.out.printf("%d. %c%c%c - %d회\n",
+                rank, r.playerName[0], r.playerName[1], r.playerName[2], r.numOfAttempts);
+            prevNumOfAttempts = r.numOfAttempts;
         }
-        return userChoice;
+        System.out.println("============================");
     }
-    public static int[] generateAnswer() {
-        int [] answer = new int[3];
-        for (int i = 0; i < 3; i++) {
-            answer[i] = (int) (Math.random() * 9 + 1);
-        }
-        return answer;
-    }
-    public static int[] ballCheck(int [] answer, int [] userChoice) {
+}
+
+class GameLogic {
+    static BallCount checkBallCount(int[] answer, int[] playerChoice) {
         int strike = 0;
         int ball = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (answer[i] == userChoice[j]) {
+
+        for (int i = 0; i < answer.length; i++) {
+            for (int j = 0; j < playerChoice.length; j++) {
+                if (answer[i] == playerChoice[j]) {
                     if (i == j) { strike++; }
-                    else { ball++; }
+                    else        { ball++;   }
                 }
             }
         }
-        return new int[]{ strike, ball };
+        return new BallCount(strike, ball);
     }
+}
 
-    public static boolean isStrikeOut(int [] ballCount) {
-        int strike = ballCount[0];
-        int ball = ballCount[1];
+class BallCount {
+     int strike;
+     int ball;
 
-        if (strike == 3) {
-            System.out.println("정답입니다!");
-            return true;
-        } else {
-            System.out.println(strike + "S " + ball + "B 입니다.");
-            return false;
+    public BallCount(int strike, int ball) {
+        this.ball = ball;
+        this.strike = strike;
+    }
+}
+
+class Player {
+    public static int[] getChoice() {
+        int[] choice = new int[3];
+        Scanner scan = new Scanner(System.in);
+        for (int i = 0; i < choice.length; i++) {
+            choice[i] = scan.nextInt();
         }
+        return choice;
+    }
+    public static char[] getName() {
+        char[] name;
+        Scanner scan = new Scanner(System.in);
+        String read = "";
+        do {
+            String r = scan.next().trim();
+            read += r.replaceAll(" ", "");
+        } while (read.length() < 3);
+        name = read.substring(0, 3).toCharArray();
+        return name;
+    }
+}
+
+class Answer {
+    public static int[] generateAnswer() {
+        int[] answer = new int[3];
+        int random = 0;
+        for (int i = 0; i < answer.length; i++) {
+            outer: do {
+                random = (int) (Math.random() * 9 + 1);
+                for (int j = 0; j < i; j++) {
+                    if (answer[j] == random) {
+                        continue outer;
+                    }
+                }
+                break;
+            } while (true);
+            answer[i] = random;
+        }
+        return answer;
+    }
+}
+
+class Record {
+    int numOfAttempts;
+    char[] playerName;
+
+    public Record(char[] playerName, int numOfAttempts) {
+        this.playerName = playerName;
+        this.numOfAttempts = numOfAttempts;
     }
 }
