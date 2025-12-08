@@ -63,7 +63,7 @@ class BaseballGame {
         int numOfAttempts = 0;
         while (true) {
             numOfAttempts++;
-            System.out.print("정답을 입력하세요: ");
+            System.out.print("답을 입력하세요: ");
             int[] choice = Player.getChoice();
             BallCount ballCount = GameLogic.checkBallCount(answer, choice);
             if (ballCount.strike == 3) {
