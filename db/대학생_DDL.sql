@@ -1,4 +1,5 @@
 
+# https://drive.google.com/file/d/1qz6ddisPaRaqNkkMmYzvBURSaWAVwfZh/view
 # 대학생 DDL
 # DB 추가
 DROP DATABASE IF EXISTS UNIVERSITY;
