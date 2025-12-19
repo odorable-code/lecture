@@ -1,11 +1,26 @@
 package homework;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
-public class HW10_StudentProgram {
-    private static ArrayList<Student> students = new ArrayList<Student>();
+interface Managable {
+    public boolean addStudent(Student student);
+    public boolean removeStudent(Student student);
+    public Student findStudent(Student student);
+    public boolean addSubject(Subject subject);
+    public boolean removeSubject(Subject subject);
+    public void showAllSubject();
+    public boolean registerScore(Score score);
+    public boolean unregisterScore(Score score);
+}
+public class HW10_StudentProgram implements Managable {
+    private ArrayList<Student> students;
+    private ArrayList<Subject> subjects;
+    private ArrayList<Score> scores;
+
 	public static void main(String[] args) {
 		/* 학생의 성적을 관리하는 프로그램을 구현하세요.
 		 * - 파일에 저장. 파일에서 불러오기 
@@ -29,49 +44,102 @@ public class HW10_StudentProgram {
 		 *  - 학생의 학년, 반, 번호를 입력받아 있으면 과목 학년, 학기, 과목명을 입력받아 삭제 
 		 * 9. 프로그램 종료 
 		 * */
-        while (true) {
-            Scanner scan = new Scanner(System.in);
-            showMenu();
-            int choice = 0;
-            System.out.print("메뉴 입력: ");
-            try {
-                choice = scan.nextInt();
-            } catch (InputMismatchException e) {
-                System.err.println("잘못된 입력입니다");
-                e.printStackTrace();
-            }
+        HW10_StudentProgram program = new HW10_StudentProgram();
 
-            switch (choice) {
+        while (true) {
+            Student s = null;
+            switch (program.chooseMenu()) {
                 case 1:
-                    addStudent(readStudentInfo());
+                    s = Student.newStudentFromInput();
+                    if (program.addStudent(s)) {
+                        System.out.println("\"" + s + "\" 등록되었습니다.");
+                        program.pause();
+                    } else {
+                        System.out.println("이미 등록된 학생입니다.");
+                        program.pause();
+                    }
                     break;
                 case 2:
-                    removeStudent(readStudentInfo());
+                    s = Student.newStudentWithoutNameFromInput();
+                    if (program.removeStudent(s)) {
+                        System.out.println("\"" + s + "\" 삭제되었습니다.");
+                        program.pause();
+                    } else {
+                        System.out.println("삭제되지 않았습니다.");
+                        program.pause();
+                    }
                     break;
                 case 3:
-                    System.out.println("=========학생 목록========");
-                    for (Student s : students) {
-                        System.out.println(s);
-                    }
-                    scan.nextLine();
+                    s = program.findStudent(Student.newStudentWithoutNameFromInput());
+                    System.out.println("=========학생조회==========");
+                    System.out.println(s);
+                    System.out.println("=========================");
+                    program.pause();
                     break;
                 case 4:
+                    Subject subject = Subject.newSubjectFromInput();
+                    if (program.addSubject(subject)) {
+                        System.out.println(subject + "\n과목이 추가됐습니다.");
+                        program.pause();
+                    }
                     break;
                 case 5:
+                    subject = Subject.newSubjectFromInput();
+                    if (program.removeSubject(subject)) {
+                        System.out.println(subject + "\n과목이 삭제됐습니다.");
+                        program.pause();
+                    }
                     break;
                 case 6:
+                    program.showAllSubject();
+                    program.pause();
                     break;
                 case 7:
-                    break;
+                    Student student = Student.newStudentWithoutNameFromInput();
+                    if (!program.students.contains(student)) {
+                        System.out.println("존재하지 않는 학생입니다.");
+                        program.pause();
+                        break;
+                    }
+                    subject = Subject.newSubjectFromInput();
+                    if (!program.subjects.contains(subject)) {
+                        System.out.println("존재하지 않는 과목입니다.");
+                        program.pause();
+                        break;
+                    }
+                    String[] in = Utils.readUserInput(new String[] { "성적" });
+                    int scoreValue = Integer.parseInt(in[0]);
+                    Score score = new Score(student, subject, scoreValue);
+                    if (program.registerScore(score)) {
+                        System.out.println(score + " 추가됨");
+                        program.pause();
+                    }
+                  break;
                 case 8:
+                    score = new Score(
+                            Student.newStudentWithoutNameFromInput(),
+                            Subject.newSubjectFromInput(),
+                            0);
+                    if (program.unregisterScore(score)) {
+                        System.out.println("제거됨");
+                        program.pause();
+                    };
                     break;
                 case 9:
+                    program.exit();
                     break;
             }
         }
 	}
+    public HW10_StudentProgram() {
+        students = new ArrayList<Student>();
+        subjects = new ArrayList<Subject>();
+        scores = new ArrayList<Score>();
+    }
 
-    static void showMenu() {
+    public int chooseMenu() {
+        int choice = 0;
+        Scanner scan = new Scanner(System.in);
         System.out.println("=======메뉴=======");
         System.out.println("1. 학생 등록");
         System.out.println("2. 학생 삭제");
@@ -83,49 +151,75 @@ public class HW10_StudentProgram {
         System.out.println("8. 학생 성적 삭제");
         System.out.println("9. 프로그램 종료");
         System.out.println("==================");
-    }
-    private static int[] readUserInput(String[] fields) {
-        Scanner scan = new Scanner(System.in);
-        int[] result = new int[fields.length];
-        int i = 0;
-        while (i < fields.length) {
-            String field = fields[i];
-            System.out.print(field + " 입력: ");
-            try {
-                result[i] = scan.nextInt();
-            } catch (InputMismatchException e) {
-                System.err.println("잘못된 입력입니다.");
-                scan.nextLine(); // 버퍼 비우기
-                continue;
-            }
-            i++;
+        System.out.print("메뉴 입력: ");
+        try {
+            choice = scan.nextInt();
+        } catch (InputMismatchException e) {
+            System.err.println("잘못된 입력입니다");
+            e.printStackTrace();
         }
-        return result;
-    }
-    private static Student readStudentInfo() {
-        int[] input = readUserInput(new String[] { "학년", "반", "번호" });
-        int grade = input[0];
-        int classNum = input[1];
-        int num = input[2];
-        System.out.print("이름 입력: ");
-        String name = new Scanner(System.in).nextLine();
-        return new Student(grade, classNum, num, name);
+        return choice;
     }
 
-    static boolean addStudent(Student student) {
+    public void pause() {
+        System.out.println("계속하려면 엔터를 누르세요.");
+        new Scanner(System.in).nextLine();
+    }
+
+    public void exit() {
+        System.out.println("시스템 종료");
+    }
+
+    @Override
+    public boolean addStudent(Student student) {
         if (students.contains(student)) {
             return false;
         }
         return students.add(student);
     }
 
-    static boolean removeStudent(Student student) {
+    @Override
+     public boolean removeStudent(Student student) {
         return students.remove(student);
     }
 
-    static Student findStudent(Student student) {
+    @Override
+    public Student findStudent(Student student) {
         int index = students.indexOf(student);
         return index != -1? students.get(index) : null;
+    }
+
+    @Override
+    public boolean addSubject(Subject subject) {
+        if (subjects.contains(subject)) {
+            return false;
+        }
+        return subjects.add(subject);
+    }
+
+    @Override
+    public boolean removeSubject(Subject subject) {
+        return subjects.remove(subject);
+    }
+
+    @Override
+    public void showAllSubject() {
+        for (Subject s : subjects) {
+            System.out.println(s);
+        }
+    }
+
+    @Override
+    public boolean unregisterScore(Score score) {
+        return scores.remove(score);
+    }
+
+    @Override
+    public boolean registerScore(Score score) {
+        if (scores.contains(score)) {
+            return false;
+        }
+        return scores.add(score);
     }
 }
 
@@ -140,17 +234,6 @@ class Student {
         this.classNum = classNum;
         this.num = num;
         this.name = name;
-    }
-
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        Student student = (Student) object;
-        return grade == student.grade && classNum == student.classNum && num == student.num;
-    }
-
-    public int hashCode() {
-        return java.util.Objects.hash(super.hashCode(), grade, classNum, num);
     }
 
     public int getGrade() {
@@ -181,13 +264,40 @@ class Student {
         return name;
     }
 
+    public void setName(String name) { this.name = name; }
+
     @Override
     public String toString() {
         return String.format("%d학년 %d반 %d번 - %s", grade, classNum, num, name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return grade == student.grade && classNum == student.classNum && num == student.num;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(grade, classNum, num);
+    }
+
+    public static Student newStudentFromInput() {
+        String[] input = Utils.readUserInput(new String[] { "학년", "반", "번호" });
+        int grade = Integer.parseInt(input[0]);
+        int classNum = Integer.parseInt(input[1]);
+        int num = Integer.parseInt(input[2]);
+        System.out.print("이름 입력: ");
+        String name = new Scanner(System.in).nextLine().trim();
+        return new Student(grade, classNum, num, name);
+    }
+    public static Student newStudentWithoutNameFromInput() {
+        String[] input = Utils.readUserInput(new String[] { "학년", "반", "번호" });
+        int grade = Integer.parseInt(input[0]);
+        int classNum = Integer.parseInt(input[1]);
+        int num = Integer.parseInt(input[2]);
+        return new Student(grade, classNum, num,"");
     }
 }
 
@@ -220,21 +330,34 @@ class Subject {
         this.name = name;
     }
 
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        Subject subject = (Subject) object;
-        return grade == subject.grade && semester == subject.semester && java.util.Objects.equals(name, subject.name);
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Subject subject = (Subject) o;
+        return grade == subject.grade && semester == subject.semester && Objects.equals(name, subject.name);
     }
 
+    @Override
     public int hashCode() {
-        return java.util.Objects.hash(super.hashCode(), grade, semester, name);
+        return Objects.hash(grade, semester, name);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d학년 %d학기 - %s", grade, semester, name);
     }
 
     public Subject(int grade, int semester, String name) {
         this.grade = grade;
         this.semester = semester;
         this.name = name;
+    }
+   		/* * 4. 과목 등록
+		 *  - 학년, 학기, 과목명을 입력받아 등록
+		 *  - 같은 학년, 학기, 과목명을 가진 과목은 등록 못함  */
+    public static Subject newSubjectFromInput() {
+        String[] input = Utils.readUserInput(new String[] { "학년", "학기", "과목" });
+        return new Subject(Integer.parseInt(input[0]), Integer.parseInt(input[1]), input[2]);
     }
 }
 
@@ -243,15 +366,21 @@ class Score {
     private Subject subject;
     private int value;
 
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        Score score = (Score) object;
-        return value == score.value && java.util.Objects.equals(student, score.student) && java.util.Objects.equals(subject, score.subject);
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Score score = (Score) o;
+        return Objects.equals(student, score.student) && Objects.equals(subject, score.subject);
     }
 
+    @Override
     public int hashCode() {
-        return java.util.Objects.hash(super.hashCode(), student, subject, value);
+        return Objects.hash(student, subject);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s\n%s\n점수: %d", student, subject, value);
     }
 
     public Student getStudent() {
@@ -282,5 +411,27 @@ class Score {
         this.student = student;
         this.subject = subject;
         this.value = value;
+    }
+}
+
+class Utils {
+
+    public static String[] readUserInput(String[] fields) {
+        Scanner scan = new Scanner(System.in);
+        String[] result = new String[fields.length];
+        int i = 0;
+        while (i < fields.length) {
+            String field = fields[i];
+            System.out.print(field + " 입력: ");
+            try {
+                result[i] = scan.next().trim();
+            } catch (InputMismatchException e) {
+                System.err.println("잘못된 입력입니다.");
+                scan.nextLine(); // 버퍼 비우기
+                continue;
+            }
+            i++;
+        }
+        return result;
     }
 }
