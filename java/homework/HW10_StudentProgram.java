@@ -1,10 +1,6 @@
 package homework;
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 interface Managable {
     public boolean addStudent(Student student);
@@ -13,13 +9,14 @@ interface Managable {
     public boolean addSubject(Subject subject);
     public boolean removeSubject(Subject subject);
     public void showAllSubject();
-    public boolean registerScore(Score score);
-    public boolean unregisterScore(Score score);
+    public boolean registerScore(SubjectScore subjectScore);
+    public boolean unregisterScore(SubjectScore subjectScore);
 }
+
 public class HW10_StudentProgram implements Managable {
     private ArrayList<Student> students;
     private ArrayList<Subject> subjects;
-    private ArrayList<Score> scores;
+    private ArrayList<SubjectScore> subjectScores;
 
 	public static void main(String[] args) {
 		/* 학생의 성적을 관리하는 프로그램을 구현하세요.
@@ -42,17 +39,19 @@ public class HW10_StudentProgram implements Managable {
 		 *  - 학생의 학년, 반, 번호를 입력받아 있으면 과목 학년, 학기, 과목명, 성적을 입력받아 추가
 		 * 8. 학생 성적 삭제
 		 *  - 학생의 학년, 반, 번호를 입력받아 있으면 과목 학년, 학기, 과목명을 입력받아 삭제 
-		 * 9. 프로그램 종료 
+		 * 9. 프로그램 종료
 		 * */
         HW10_StudentProgram program = new HW10_StudentProgram();
 
         while (true) {
-            Student s = null;
+            Student student = null;
+            Subject subject = null;
+            SubjectScore subjectScore = null;
             switch (program.chooseMenu()) {
                 case 1:
-                    s = Student.newStudentFromInput();
-                    if (program.addStudent(s)) {
-                        System.out.println("\"" + s + "\" 등록되었습니다.");
+                    student = Student.newStudentFromInput();
+                    if (program.addStudent(student)) {
+                        System.out.println("\"" + student + "\" 등록되었습니다.");
                         program.pause();
                     } else {
                         System.out.println("이미 등록된 학생입니다.");
@@ -60,9 +59,9 @@ public class HW10_StudentProgram implements Managable {
                     }
                     break;
                 case 2:
-                    s = Student.newStudentWithoutNameFromInput();
-                    if (program.removeStudent(s)) {
-                        System.out.println("\"" + s + "\" 삭제되었습니다.");
+                    student = Student.newStudentWithoutNameFromInput();
+                    if (program.removeStudent(student)) {
+                        System.out.println("\"" + student + "\" 삭제되었습니다.");
                         program.pause();
                     } else {
                         System.out.println("삭제되지 않았습니다.");
@@ -70,14 +69,14 @@ public class HW10_StudentProgram implements Managable {
                     }
                     break;
                 case 3:
-                    s = program.findStudent(Student.newStudentWithoutNameFromInput());
+                    student = program.findStudent(Student.newStudentWithoutNameFromInput());
                     System.out.println("=========학생조회==========");
-                    System.out.println(s);
+                    System.out.println(student);
                     System.out.println("=========================");
                     program.pause();
                     break;
                 case 4:
-                    Subject subject = Subject.newSubjectFromInput();
+                    subject = Subject.newSubjectFromInput();
                     if (program.addSubject(subject)) {
                         System.out.println(subject + "\n과목이 추가됐습니다.");
                         program.pause();
@@ -95,7 +94,7 @@ public class HW10_StudentProgram implements Managable {
                     program.pause();
                     break;
                 case 7:
-                    Student student = Student.newStudentWithoutNameFromInput();
+                    student = Student.newStudentWithoutNameFromInput();
                     if (!program.students.contains(student)) {
                         System.out.println("존재하지 않는 학생입니다.");
                         program.pause();
@@ -109,18 +108,22 @@ public class HW10_StudentProgram implements Managable {
                     }
                     String[] in = Utils.readUserInput(new String[] { "성적" });
                     int scoreValue = Integer.parseInt(in[0]);
-                    Score score = new Score(student, subject, scoreValue);
-                    if (program.registerScore(score)) {
-                        System.out.println(score + " 추가됨");
+                    subjectScore = new SubjectScore(subject.getGrade(),
+                                                    subject.getSemester(),
+                                                    subject.getName(),
+                                                    scoreValue);
+                    if (program.registerScore(subjectScore)) {
+                        System.out.println(subjectScore + " 추가됨");
                         program.pause();
                     }
                   break;
                 case 8:
-                    score = new Score(
-                            Student.newStudentWithoutNameFromInput(),
-                            Subject.newSubjectFromInput(),
-                            0);
-                    if (program.unregisterScore(score)) {
+                    subject = Subject.newSubjectFromInput();
+                    subjectScore = new SubjectScore(subject.getGrade(),
+                                                    subject.getSemester(),
+                                                    subject.getName(),
+                                                    0.0);
+                    if (program.unregisterScore(subjectScore)) {
                         System.out.println("제거됨");
                         program.pause();
                     };
@@ -134,7 +137,7 @@ public class HW10_StudentProgram implements Managable {
     public HW10_StudentProgram() {
         students = new ArrayList<Student>();
         subjects = new ArrayList<Subject>();
-        scores = new ArrayList<Score>();
+        subjectScores = new ArrayList<SubjectScore>();
     }
 
     public int chooseMenu() {
@@ -210,16 +213,16 @@ public class HW10_StudentProgram implements Managable {
     }
 
     @Override
-    public boolean unregisterScore(Score score) {
-        return scores.remove(score);
+    public boolean unregisterScore(SubjectScore subjectScore) {
+        return subjectScores.remove(subjectScore);
     }
 
     @Override
-    public boolean registerScore(Score score) {
-        if (scores.contains(score)) {
+    public boolean registerScore(SubjectScore subjectScore) {
+        if (subjectScores.contains(subjectScore)) {
             return false;
         }
-        return scores.add(score);
+        return subjectScores.add(subjectScore);
     }
 }
 
@@ -228,12 +231,14 @@ class Student {
     private int classNum;
     private int num;
     private String name;
+    private List<SubjectScore> subjectScores;
 
     public Student(int grade, int classNum, int num, String name) {
         this.grade = grade;
         this.classNum = classNum;
         this.num = num;
         this.name = name;
+        this.subjectScores = new ArrayList<>();
     }
 
     public int getGrade() {
@@ -266,9 +271,28 @@ class Student {
 
     public void setName(String name) { this.name = name; }
 
+    public List<SubjectScore> getSubjectScores() {
+        return subjectScores;
+    }
+
+    public void setSubjectScores(List<SubjectScore> subjectScores) {
+        this.subjectScores = subjectScores;
+    }
+
     @Override
     public String toString() {
-        return String.format("%d학년 %d반 %d번 - %s", grade, classNum, num, name);
+        return String.format("%d학년 %d반 %d번 %s", grade, classNum, num, name);
+    }
+
+    public void printScore() {
+        System.out.println("====================");
+        System.out.printf("%s 성적\n", this.toString(), name);
+        System.out.println("====================");
+        for (SubjectScore s : subjectScores) {
+            Subject subject = s.getSubject();
+            double score = s.getScore();
+            System.out.printf("%s %f\n", subject.toString(), score);
+        }
     }
 
     @Override
@@ -357,38 +381,32 @@ class Subject {
 		 *  - 같은 학년, 학기, 과목명을 가진 과목은 등록 못함  */
     public static Subject newSubjectFromInput() {
         String[] input = Utils.readUserInput(new String[] { "학년", "학기", "과목" });
-        return new Subject(Integer.parseInt(input[0]), Integer.parseInt(input[1]), input[2]);
+        int grade = Integer.parseInt(input[0]);
+        int semester = Integer.parseInt(input[1]);
+        String name = input[2];
+        return new Subject(grade, semester, name);
     }
 }
 
-class Score {
-    private Student student;
+class SubjectScore {
     private Subject subject;
-    private int value;
+    private double score;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Score score = (Score) o;
-        return Objects.equals(student, score.student) && Objects.equals(subject, score.subject);
+        SubjectScore subjectScore = (SubjectScore) o;
+        return Objects.equals(subject, subjectScore.subject);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(student, subject);
+        return Objects.hash(subject);
     }
 
     @Override
     public String toString() {
-        return String.format("%s\n%s\n점수: %d", student, subject, value);
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
+        return String.format("%s\n점수: %f", subject, score);
     }
 
     public Subject getSubject() {
@@ -399,23 +417,21 @@ class Score {
         this.subject = subject;
     }
 
-    public int getValue() {
-        return value;
+    public double getScore() {
+        return score;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setScore(double score) {
+        this.score = score;
     }
 
-    public Score(homework.Student student, homework.Subject subject, int value) {
-        this.student = student;
-        this.subject = subject;
-        this.value = value;
+    public SubjectScore(int grade, int semester, String name, double score) {
+        this.subject = new Subject(grade, semester, name);
+        this.score = score;
     }
 }
 
 class Utils {
-
     public static String[] readUserInput(String[] fields) {
         Scanner scan = new Scanner(System.in);
         String[] result = new String[fields.length];
