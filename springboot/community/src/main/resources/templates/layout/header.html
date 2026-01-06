@@ -21,7 +21,7 @@
                         <a class="nav-link" href="/post/list">게시글</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" href="/admin/board/list">게시판</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Link</a>

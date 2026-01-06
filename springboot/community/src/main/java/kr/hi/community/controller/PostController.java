@@ -1,13 +1,17 @@
 package kr.hi.community.controller;
 
+import kr.hi.community.model.dto.PostDTO;
+import kr.hi.community.model.util.CustomUser;
 import kr.hi.community.model.vo.BoardVO;
 import kr.hi.community.model.vo.PostVO;
 import kr.hi.community.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 
@@ -47,5 +51,14 @@ public class PostController {
         ArrayList<BoardVO> boards = postService.getBoardList();
         model.addAttribute("boards", boards);
         return "/post/insert";
+    }
+
+    @PostMapping("/post/insert")
+    public String postInsertPost(Model model, PostDTO post, @AuthenticationPrincipal CustomUser currentUser) {
+        boolean result = postService.insertPost(post, currentUser);
+        if (result) {
+            return "redirect:/post/list";
+        }
+        return "redirect:/post/insert";
     }
 }

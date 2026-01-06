@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.hi.community.dao.PostDAO">
+    <insert id="insertPost">
+        insert into post (po_me_id, po_bo_num, po_title, po_content)
+        values (#{post.writer}, #{post.board}, #{post.title}, #{post.content})
+    </insert>
+    <insert id="insertBoard">
+        insert into board (bo_name)
+        values (#{boName})
+    </insert>
     <update id="updateView">
         update post
         <!-- 조회수 증가 -->
@@ -9,12 +17,24 @@
         <!-- 삭제 안된 게시글 -->
         and po_del = 'N'
     </update>
+    <update id="updateBoard">
+        update board
+        set
+            bo_name = #{name}
+        where
+            bo_num = #{num}
+    </update>
+    <delete id="deleteBoard">
+        delete from board
+        where bo_num = #{num}
+    </delete>
     <!--
     id에는 dao의 메서드명을 입력. 오타 발생시 예외가 발생
     ~~~(not found) 예외 발생
     -->
     <select id="selectPostList" resultType="kr.hi.community.model.vo.PostVO">
-        select * from post
+        select post.*, bo_name po_bo_name from post
+        join board on po_bo_num = bo_num
         <!-- 삭제 안된 게시글을 조회 -->
         where po_del = 'N'
         <!-- 최신 게시글이 위에 가도록 정렬 -->
