@@ -2,6 +2,7 @@ package kr.hi.community.service;
 
 import kr.hi.community.dao.PostDAO;
 import kr.hi.community.model.dto.PostDTO;
+import kr.hi.community.model.util.Criteria;
 import kr.hi.community.model.util.CustomUser;
 import kr.hi.community.model.vo.BoardVO;
 import kr.hi.community.model.vo.PostVO;
@@ -15,9 +16,9 @@ public class PostService {
     @Autowired
     PostDAO postDAO;
 
-    public ArrayList<PostVO> getPostList() {
+    public ArrayList<PostVO> getPostList(Criteria cri) {
         // DAO에게 게시글 목록을 가져오라고 요청
-        ArrayList<PostVO> list = postDAO.selectPostList();
+        ArrayList<PostVO> list = postDAO.selectPostList(cri);
         // 게시글 목록을 반환
         return list;
     }
@@ -87,5 +88,40 @@ public class PostService {
             // 수정하려는 게시판 명이 중복되면 예외 밣생
             e.printStackTrace();
         }
+    }
+
+    public int getTotalCount(Criteria cri) {
+        if (cri == null) {
+            return 0;
+        }
+
+        return postDAO.selectTotalCount(cri);
+    }
+
+
+    public void deletePost(int num, CustomUser currentUser) {
+        if (currentUser == null || currentUser.getUsername().isEmpty()) {
+            return;
+        }
+        // 작성자 정보를 가져오기 위해 게시글 정보를 가져옴
+        PostVO post = postDAO.selectPost(num);
+        // 작성자가 다르면
+        if (post == null || !post.getPo_me_id().equals(currentUser.getUsername())) {
+            return;
+        }
+        postDAO.deletePost(num);
+    }
+
+    public void updatePost(int num, PostDTO post, CustomUser currentUser) {
+        if (currentUser == null || currentUser.getUsername().isEmpty()) {
+            return;
+        }
+        // 작성자 정보를 가져오기 위해 게시글 정보를 가져옴
+        PostVO post1 = postDAO.selectPost(num);
+        // 작성자가 다르면
+        if (post1 == null || !post1.getPo_me_id().equals(currentUser.getUsername())) {
+            return;
+        }
+        postDAO.updatePost(num, post);
     }
 }
