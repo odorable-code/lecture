@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public class PostDTO {
-    String title;
-    String content;
-    String writer;
-    int board;
+
+	int postNum;
+	String title;
+	String content;
+	String writer;
+	int board;
 }

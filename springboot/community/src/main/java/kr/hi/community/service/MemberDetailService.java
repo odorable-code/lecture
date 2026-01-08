@@ -15,12 +15,12 @@ public class MemberDetailService implements UserDetailsService{
 
 	@Autowired
 	MemberDAO memberDao;
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		MemberVO member = memberDao.selectMember(username);
 
-        @Override
-        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-            MemberVO member = memberDao.selectMember(username);
-
-            return member == null ? null : new CustomUser(member);
+		return member == null ? null : new CustomUser(member);
 	}
 
 }

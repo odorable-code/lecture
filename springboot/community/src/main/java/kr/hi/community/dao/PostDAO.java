@@ -1,33 +1,45 @@
 package kr.hi.community.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import kr.hi.community.model.dto.PostDTO;
 import kr.hi.community.model.util.Criteria;
 import kr.hi.community.model.vo.BoardVO;
+import kr.hi.community.model.vo.FileVO;
 import kr.hi.community.model.vo.PostVO;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.ArrayList;
 
 public interface PostDAO {
-    ArrayList<PostVO> selectPostList(@Param("cri") Criteria criteria);
 
-    PostVO selectPost(@Param("num") int num);
+	ArrayList<PostVO> selectPostList(@Param("cri")Criteria cri);
 
-    void updateView(@Param("num") int num);
+	//@Param("매퍼.xml에서 사용할 이름")
+	void updateView(@Param("num")int po_num);
 
-    ArrayList<BoardVO> selectBoardList();
+	PostVO selectPost(@Param("num")int po_num);
 
-    void insertPost(@Param("post") PostDTO post);
+	ArrayList<BoardVO> selectBoardList();
 
-    void insertBoard(@Param("boName") String boName);
+	void insertPost(@Param("post")PostDTO post);
 
-    void deleteBoard(@Param("num") int num);
+	void insertBoard(@Param("name")String name);
 
-    void updateBoard(@Param("num") int num, @Param("name") String name);
+	void deleteBoard(@Param("num")int num);
 
-    int selectTotalCount(@Param("cri") Criteria cri);
+	void updateBoard(@Param("num")int num, @Param("name")String name);
 
-    void deletePost(@Param("num") int num);
+	int selectTotalCount(@Param("cri")Criteria cri);
 
-    void updatePost(@Param("num") int num, @Param("post") PostDTO post);
+	void deletePost(@Param("num")int postNum);
+
+	void updatePost(@Param("post")PostDTO post);
+
+	void insertFile(@Param("file")FileVO fileVo);
+
+	List<FileVO> selectFileList(@Param("num")int po_num);
+
+	void deleteFile(@Param("fiNum")int fi_num);
+
 }
