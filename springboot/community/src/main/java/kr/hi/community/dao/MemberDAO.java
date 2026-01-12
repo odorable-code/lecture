@@ -1,9 +1,8 @@
 package kr.hi.community.dao;
 
-import org.apache.ibatis.annotations.Param;
-
 import kr.hi.community.model.dto.MemberDTO;
 import kr.hi.community.model.vo.MemberVO;
+import org.apache.ibatis.annotations.Param;
 
 public interface MemberDAO {
 
