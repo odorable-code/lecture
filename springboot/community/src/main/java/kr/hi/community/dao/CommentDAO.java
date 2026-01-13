@@ -13,4 +13,11 @@ public interface CommentDAO {
     List<CommentVO> selectCommentList(@Param("cri") Criteria cri);
 
     int selectCommentCount(@Param("cri") Criteria cri);
+    //  update, insert, delete는 반환 값이  boolean , int로 설정할 수 있는데
+    // 설정함면 boolean 일 때 해당쿼리가 몇 개
+    boolean deleteComment(@Param("num") int coNum);
+
+    CommentVO selectComment(@Param("num") int coNum);
+
+    boolean updateComment(@Param("dto") CommentDTO dto);
 }

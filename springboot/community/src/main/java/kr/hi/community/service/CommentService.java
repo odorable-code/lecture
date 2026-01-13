@@ -3,12 +3,12 @@ package kr.hi.community.service;
 
 import kr.hi.community.dao.CommentDAO;
 import kr.hi.community.model.dto.CommentDTO;
-import kr.hi.community.model.util.CommentCriteria;
 import kr.hi.community.model.util.Criteria;
 import kr.hi.community.model.util.CustomUser;
 import kr.hi.community.model.util.PageMaker;
 import kr.hi.community.model.vo.CommentVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,12 +38,13 @@ public class CommentService {
             commentDAO.insertComment(commentDto);
             return "댓글을 등록했습니다.";
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
             return "댓글을 등록하지 못했습니다.";
         }
     }
 
     public List<CommentVO> getCommentList(Criteria cri) {
-        System.out.println((Criteria) cri);
         return commentDAO.selectCommentList(cri);
     }
 
@@ -51,5 +52,52 @@ public class CommentService {
         // 다오에게 페이지 정보를 주면서 전체 댓글 수를 가져오라고 수정
         int totalCount = commentDAO.selectCommentCount(cri);
         return new PageMaker(3, cri, totalCount);
+    }
+
+    public String deleteComment(int coNum, CustomUser customUser) {
+        if (customUser == null || customUser.getUsername() == null)  {
+            return "로그인이 필요한 서비스입니다.";
+        }
+        if (!isWriter(coNum, customUser)) {
+            return "작성자가 아닙니다.";
+        }
+
+        try {
+            boolean result = commentDAO.deleteComment(coNum);
+            if (result) {
+                return "댓글을 삭제했습니다.";
+            } else {
+                return "댓글을 삭제할 수 없습니다.";
+            }
+        } catch (Exception e) {
+            return "댓글을 삭제할 수 없습니다.";
+        }
+    }
+
+    public String updateComment(CommentDTO dto, CustomUser user) {
+        if (user == null || user.getUsername() == null) {
+            return "로그인이 필요한 서비스입니다.";
+        }
+
+        if (!isWriter(dto.getCoNum(), user)) {
+            return "작성자가 아닙니다.";
+        }
+        boolean result = commentDAO.updateComment(dto);
+        if (result) {
+            return "댓글을 수정했습니다.";
+        }
+        return "댓글을 수정하지 못했습니다.";
+    }
+
+    private boolean isWriter(int coNum, CustomUser user) {
+        if (user == null || user.getUsername() == null)  {
+            return false;
+        }
+        CommentVO comment = commentDAO.selectComment(coNum);
+
+        if (comment == null || !comment.getCo_me_id().equals(user.getUsername())) {
+            return false;
+        }
+        return true;
     }
 }

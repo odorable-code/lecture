@@ -9,10 +9,7 @@ import kr.hi.community.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +40,6 @@ public class CommentController {
     ) {
         cri.setPerPageNum(3);
 
-        System.out.println("pageStart: "  + cri.getPageStart());
-        System.out.println("perPageNum: " + cri.getPerPageNum());
         // 서비스에게 게시글 번호를 주면서 댓글 목록을 가져오라고 요청
         // 댓글목록 = 서비스야.댓글목록가져와(게시글번호);
         List<CommentVO> list = commentService.getCommentList(cri);
@@ -55,5 +50,24 @@ public class CommentController {
         map.put("list", list);
         map.put("pm", pm);
         return ResponseEntity.ok(map);
+    }
+
+    @PostMapping("/delete/{num}")
+    // @ResponseBody // @RestController일 때는 생략
+    public ResponseEntity<String> delete (
+        @PathVariable("num") int coNum,
+        @AuthenticationPrincipal CustomUser customUser
+    ) {
+        // 서비스야.댓글을삭제해줘(댓글번호, 현재유저정보);
+        String result = commentService.deleteComment(coNum, customUser);
+        return ResponseEntity.ok(result);
+    }
+    @PostMapping("/update")
+    public ResponseEntity<String> update(
+        @RequestBody CommentDTO dto,
+        @AuthenticationPrincipal CustomUser user
+    ) {
+        String result = commentService.updateComment(dto, user);
+        return ResponseEntity.ok(result);
     }
 }
