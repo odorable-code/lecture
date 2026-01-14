@@ -31,7 +31,8 @@ public class HomeController {
 	
 	@PostMapping("/signup")
 	public String signupPost(/* 화면이 보낸 회원 정보를 받아옴 */
-		MemberDTO member) {
+		MemberDTO member
+    ) {
 		
 		boolean result = memberService.signup(member);
 		//회원가입 성공하면 메인 페이지로

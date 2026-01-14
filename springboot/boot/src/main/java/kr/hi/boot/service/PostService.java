@@ -3,7 +3,9 @@ package kr.hi.boot.service;
 import java.util.ArrayList;
 
 import kr.hi.boot.model.dto.PostDTO;
+import kr.hi.boot.model.util.Criteria;
 import kr.hi.boot.model.util.CustomUser;
+import kr.hi.boot.model.util.PageMaker;
 import kr.hi.boot.model.vo.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,8 +55,8 @@ public class PostService {
         }
     }
 
-    public ArrayList<Post> getPostList() {
-        return postDAO.getPostList();
+    public ArrayList<Post> getPostList(Criteria cri) {
+        return postDAO.getPostList(cri);
     }
 
     public Post getPost(int num) {
@@ -92,5 +94,11 @@ public class PostService {
 
     public void updatePostView(int num) {
         postDAO.updatePostView(num);
+    }
+
+    public PageMaker getPageMaker(Criteria cri) {
+        int displayPageNum = 3;
+        int totalCount = postDAO.selectPostListCount(cri);
+        return new PageMaker(displayPageNum, cri, totalCount);
     }
 }

@@ -1,6 +1,7 @@
 package kr.hi.boot.dao;
 
 import kr.hi.boot.model.dto.PostDTO;
+import kr.hi.boot.model.util.Criteria;
 import kr.hi.boot.model.vo.Board;
 import kr.hi.boot.model.vo.Post;
 import org.apache.ibatis.annotations.Param;
@@ -16,7 +17,7 @@ public interface PostDAO {
 
     void updateBoard(@Param("num")int num, @Param("name")String name);
 
-    ArrayList<Post> getPostList();
+    ArrayList<Post> getPostList(@Param("cri") Criteria cri);
 
     Post getPost(@Param("num")int num);
     
@@ -26,4 +27,5 @@ public interface PostDAO {
 
     void updatePostView(@Param("num")int num);
 
+    int selectPostListCount(@Param("cri") Criteria cri);
 }
