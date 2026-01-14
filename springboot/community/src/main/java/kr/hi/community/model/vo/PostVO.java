@@ -20,4 +20,4 @@ public class PostVO {
     // 댓글 수 (삭제된 댓글 포함)
     int po_comment_count;
 
-}
+	

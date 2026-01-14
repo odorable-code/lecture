@@ -17,7 +17,6 @@ import kr.hi.community.model.util.UploadFileUtils;
 import kr.hi.community.model.vo.BoardVO;
 import kr.hi.community.model.vo.FileVO;
 import kr.hi.community.model.vo.LikeVO;
-import kr.hi.community.model.vo.PostVO;
 
 @Service
 public class PostService {
@@ -239,7 +238,6 @@ public class PostService {
 				deleteFile(fileVo);
 			}
 		}
-		
 	}
 
 	public List<FileVO> getFileList(int po_num) {
