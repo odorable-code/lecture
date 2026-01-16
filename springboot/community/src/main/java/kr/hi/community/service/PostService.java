@@ -3,6 +3,7 @@ package kr.hi.community.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.hi.community.model.vo.PostVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -39,7 +39,7 @@ public class PostController {
         //가져온 게시글 목록을 화면에 전달
         model.addAttribute("list", list);
         model.addAttribute("pm", pm);
-        model.addAttribute("boardList", boardList);
+        model.addAttribute("bList", boardList);
         return "post/list";
     }
 
@@ -57,9 +57,12 @@ public class PostController {
     }
 
     @GetMapping("/post/insert")
-    public String postInsert(Model model) {
+    public String postInsert(Model model,
+        @AuthenticationPrincipal CustomUser user
+    ) {
         // 게시판 목록을 가져옴
         ArrayList<Board> list = postService.getBoardList();
+        System.out.println(user);
         // 화면에 게시된 목록을 전달
         model.addAttribute("list", list);
         return "post/insert";
@@ -72,5 +75,36 @@ public class PostController {
         postService.insertPost(post, cUser);
         return "redirect:/post/list";
     }
+    @PostMapping("/post/delete/{num}")
+    public String postDelete(
+        @PathVariable("num") int num,
+        @AuthenticationPrincipal CustomUser user
+    ) {
+        postService.deletePost(num, user);
+        return "redirect:post/list";
+    }
+
+    @GetMapping("/post/update/{num}")
+    public String postUpdate(
+        Model model,
+        @PathVariable("num") int num
+    ) {
+        Post post = postService.getPost(num);
+        model.addAttribute("post", post);
+        return "/post/update";
+    }
+
+    @PostMapping("/post/update/{num}")
+    public String postUpdate(
+        @PathVariable("num") int num,
+        PostDTO postDto,
+        @AuthenticationPrincipal CustomUser user
+    ) {
+        postService.updatePost(
+                num, postDto, user
+        );
+        return "redirect:/post/detail/{num}";
+    }
+
 }
 

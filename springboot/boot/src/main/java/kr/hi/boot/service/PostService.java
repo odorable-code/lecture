@@ -101,4 +101,38 @@ public class PostService {
         int totalCount = postDAO.selectPostListCount(cri);
         return new PageMaker(displayPageNum, cri, totalCount);
     }
+
+    public void deletePost(int num, CustomUser user) {
+        if (user == null || user.getUsername() == null) {
+            return;
+        }
+        Post post = getPost(num);
+        if (post == null) {
+            return;
+        }
+        String postWriter = post.getPo_me_id();
+        String username = user.getUsername();
+        if (!username.equals(postWriter)) {
+            return;
+        }
+        postDAO.deletePost(num);
+    }
+
+    public void updatePost(int num, PostDTO postDto, CustomUser user) {
+        if (user == null || user.getUsername() == null) {
+            return;
+        }
+        if (postDto.getTitle().trim().isEmpty()
+            || postDto.getContent().trim().isEmpty()) {
+            return;
+        }
+        Post post = getPost(num);
+        if (post == null) { return; }
+        String postWriter = post.getPo_me_id();
+        String username = user.getUsername();
+        if (!username.equals(postWriter)) {
+            return;
+        }
+        postDAO.updatePost(num, postDto);
+    }
 }
