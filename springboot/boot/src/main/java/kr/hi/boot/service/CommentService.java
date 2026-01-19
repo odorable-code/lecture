@@ -70,14 +70,28 @@ public class CommentService {
 
     private boolean isWriter(int coNum, String id) {
         Comment comment = commentDAO.selectComment(coNum);
-        System.out.println(coNum);
-        System.out.println(comment);
         if (comment == null) {
             return false;
         }
         String writer = comment.getId();
-        System.out.println("writer: " + writer);
-        System.out.println("id: " + id);
         return writer.equals(id);
+    }
+
+    public String updateComment(int coNum, Comment comment, CustomUser user) {
+        if (user == null || user.getUsername() == null) {
+            return "로그인이 필요한 서비스입니다.";
+        }
+        if (comment == null || comment.getContent().isBlank()) {
+            return "댓글을 입력하세요.";
+        }
+        String id = user.getUsername();
+        if (!isWriter(coNum, id)) {
+            return "작성자가 아닙니다.";
+        }
+        boolean res = commentDAO.updateComment(coNum, comment.getContent());
+        if (res) {
+            return "댓글을 수정했습니다.";
+        }
+        return "댓글을 수정하지 못했습니다.";
     }
 }

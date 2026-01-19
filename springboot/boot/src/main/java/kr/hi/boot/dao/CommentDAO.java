@@ -15,5 +15,7 @@ public interface CommentDAO {
 
     boolean deleteComment(@Param("coNum") int coNum);
     Comment selectComment(@Param("coNum") int coNum);
+
+    boolean updateComment(@Param("coNum") int coNum, @Param("content") String content);
 }
 

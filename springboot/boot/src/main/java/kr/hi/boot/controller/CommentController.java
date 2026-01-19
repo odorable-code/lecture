@@ -6,12 +6,10 @@ import kr.hi.boot.model.util.CustomUser;
 import kr.hi.boot.model.util.PageMaker;
 import kr.hi.boot.model.vo.Comment;
 import kr.hi.boot.service.CommentService;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -61,4 +59,13 @@ public class CommentController {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping("/posts/{postNum}/comments/{coNum}")
+    public ResponseEntity<String> updateComment(
+        @PathVariable("coNum") int coNum,
+        @RequestBody Comment comment,
+        @AuthenticationPrincipal CustomUser user
+    ) {
+        String msg = commentService.updateComment(coNum, comment, user);
+        return ResponseEntity.ok(msg);
+    }
  }

@@ -3,7 +3,7 @@ package kr.hi.boot.model.vo;
 import lombok.Data;
 
 @Data
-public class Post {
+public class  Post {
     int po_num;
     String po_title;
     String po_content;
