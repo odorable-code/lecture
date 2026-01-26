@@ -1,4 +1,4 @@
-package kr.hi.community.model.util;
+package kr.hi.post.model.util;
 
 import lombok.Data;
 
