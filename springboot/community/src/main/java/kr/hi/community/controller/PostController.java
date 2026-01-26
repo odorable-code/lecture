@@ -59,7 +59,7 @@ public class PostController {
 		
 		//서비스에게 게시판 목록을 가져오라고 요청
 		ArrayList<BoardVO> boardList = postService.getBoardList();
-		
+
 		//서비스에게 페이지정보(검색어, 게시판, 타입)을 주면서 일치하는 게시글 수를 가져오라고 요청
 		int totalCount = postService.getTotalCount(cri); 
 		//페이지메이커를 생성
