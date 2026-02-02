@@ -3,9 +3,7 @@ package kr.hi.todo.service;
 import kr.hi.todo.dao.TodoDAO;
 import kr.hi.todo.model.vo.Todo;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -16,19 +14,29 @@ public class TodoService {
         this.todoDAO = todoDAO;
     }
 
-    public List<Todo> getTodos() {
-        return todoDAO.selectTodos();
+    public List<Todo> getTodos(String date) {
+        return todoDAO.selectTodos(date);
     }
 
     public boolean postTodo(Todo todo) {
         return todoDAO.insertTodo(todo);
     }
 
-    public List<Todo> getTodosByDate(Date date) {
-        return todoDAO.selectTodosByDate(date);
-    }
-
     public boolean deleteTodo(int num) {
-        return todoDAO.deleteTodo(num);
+        try {
+            return todoDAO.deleteTodo(num);
+        } catch (Exception err) {
+            err.printStackTrace();
+            return false;
+        }
+    }
+    public boolean updateTodo(Todo todo) {
+        try  {
+            return todoDAO.updateTodo(todo);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

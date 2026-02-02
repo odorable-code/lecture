@@ -2,7 +2,6 @@ package kr.hi.todo.controller;
 
 import kr.hi.todo.model.vo.Todo;
 import kr.hi.todo.service.TodoService;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +18,13 @@ public class TodoController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Todo>> GetTodos() {
-        List<Todo> list = todoService.getTodos();
+    public ResponseEntity<List<Todo>> GetTodos(
+        @RequestParam("date") String date
+    ) {
+       // 서비스에서 date를 처리하는데,
+       // yyyy-MM-dd 형식이 아니면 전체조회로, yyyy-MM-dd 형식이면 날짜에 맞는 할일을 조회
+        List<Todo> list = todoService.getTodos(date);
+        System.out.println(list);
         return ResponseEntity.ok(list);
     }
 
@@ -49,4 +53,13 @@ public class TodoController {
         }
         return ResponseEntity.ok("삭제되지 않았습니다.");
     }
+    @PutMapping("/{num}")
+    public ResponseEntity<Boolean> deleteTodo(
+        @PathVariable("num") int num,
+        @RequestBody Todo todo
+    ) {
+        boolean res = todoService.updateTodo(todo);
+        return ResponseEntity.ok(res);
+    }
 }
+

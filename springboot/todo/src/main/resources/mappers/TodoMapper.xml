@@ -6,6 +6,10 @@
         select #{todo.date}, #{todo.text}, ifnull(max(`order`), 0) + 1 from todo
         where date = #{todo.date}
     </insert>
+    <update id="updateTodo">
+        update todo set text = #{todo.text}
+        where num = #{todo.num}
+    </update>
     <delete id="deleteTodo">
         delete from todo
         where num = #{num}
@@ -13,6 +17,9 @@
 
     <select id="selectTodos" resultType="kr.hi.todo.model.vo.Todo">
         select * from todo
+        <if test='date != ""'>
+            where date = #{date}
+        </if>
         order by date desc, `order` asc
     </select>
     <select id="selectTodosByDate" resultType="kr.hi.todo.model.vo.Todo">
