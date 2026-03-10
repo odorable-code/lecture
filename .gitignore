@@ -24,3 +24,11 @@ hs_err_pid*
 replay_pid*
 *-checkpoint.ipynb
 .DS_Store
+springboot/post/.gradle/9.2.1/checksums/md5-checksums.bin
+springboot/post/.settings/org.eclipse.buildship.core.prefs
+springboot/post/.settings/org.eclipse.jdt.core.prefs
+springboot/post/.settings/org.eclipse.buildship.core.prefs
+springboot/post/.gradle/9.2.1/checksums/sha1-checksums.bin
+springboot/post/.gradle/9.2.1/checksums/checksums.lock
+springboot/post/.gradle/9.2.1/checksums/checksums.lock
+*.lock
