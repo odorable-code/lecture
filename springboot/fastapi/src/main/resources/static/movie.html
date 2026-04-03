@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fast Boot</title>
+</head>
+<body>
+    <a href="/">메인페이지로</a>
+    <h1>영화추천</h1>
+    <form>
+        <label>
+            <select name="type">
+                <option value="content">내용 기반 추천</option>
+                <option value="etc">정보 기반 추천</option>
+                <option value="director">감독 기반 추천</option>
+            </select>
+        </label>
+        <label>
+            <input type="text" name="movie" list="movieList" placeholder="영화제목을 입력하세요">
+        </label>
+        <button type="button" id="btn" onclick="btnClick()">추천받기</button>
+        <datalist id="movieList"></datalist>
+    </form>
+    <ol id="resultDiv"></ol>
+    <script type="text/javascript">
+        const resultDiv = document.querySelector('#resultDiv');
+        const movieList = document.querySelector('#movieList');
+        const btn = document.querySelector("#btn");
+        const input = document.querySelector('[name=movie]');
+        const typeEl = document.querySelector('[name=type]');
+
+        async function btnClick() {
+            btn.disabled = true;
+            const title = input.value.trim();
+            const type = typeEl.value;
+
+            if (!title) {
+                alert("제목을 입력하세요");
+                throw new Error();
+            }
+            try {
+                const resp = await fetch(`/api/v1/movies/recommend?title=${title}&type=${type}`);
+                if (!resp.ok) {
+                    resultDiv.innerHTML = `<li>연결 실패</li>`;
+                    throw new Error();
+                }
+
+                const res = await resp.json();
+                let str = '';
+                res.forEach(m => {
+                    str += `<li>${m.title}</li>`
+                });
+                resultDiv.innerHTML = str;
+            } catch (err) {
+                console.error(err);
+            } finally {
+                 btn.disabled = false;
+            }
+        }
+
+        async function getMovieList() {
+            try {
+                const resp = await fetch('/api/v1/movies');
+                if (!resp.ok) {
+                    // 요청 실패
+                    resultDiv.innerHTML = '<li>요청실패</li>';
+                    return;
+                }
+                const res = await resp.json();
+                let str = '';
+                res.forEach(m => {
+                    str += `<option>${m.title}</option>`;
+                });
+                movieList.innerHTML = str;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        getMovieList();
+    </script>
+</body>
+</html>

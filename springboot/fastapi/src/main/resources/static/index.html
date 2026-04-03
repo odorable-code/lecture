@@ -1,39 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html> <html lang="en"> <head>
     <meta charset="UTF-8">
     <title>FastAPI</title>
 </head>
 <body>
-    <form action="" method="post" id="sendForm">
-        <input type="text" id="sentence" name="msg">
-        <button id="btn" type="button">전송</button>
-    </form>
-    <div id="result"></div>
-    <script type="text/javascript">
-        const btn = document.getElementById('btn');
-        const form = document.getElementById('sendForm');
-        const text = document.getElementById('sentence');
-        const resultDiv = document.getElementById('result');
-
-        btn.addEventListener('click', async () => {
-            const formData = new FormData(form);
-            btn.enabled = false;
-
-            try {
-                const resp = await fetch('/api/v1/proxy/text', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const res = await resp.json();
-                resultDiv.innerHTML = `분석결과 : ${res.msg}`;
-            } catch (err) {
-                console.error(err);
-            } finally {
-                btn.enabled = true;
-            }
-        })
-    </script>
-</body>
+    <a href="/image.html">이미지 예측 페이지로 이동</a>
+    <br>
+    <a href="/text.html">텍스트 예측 페이지로 이동</a>
+    <br>
+    <a href="/movie.html">영화 추천 페이지로 이동</a>
+    <br>
+    <a href="/fashion.html">패션 이미지 예측 페이지로 이동</a>
+    </body>
 </html>

@@ -1,9 +1,9 @@
 # 설치할 라이브러리
 # fastapi, uvicorn
 # pip install 라이브러리1 라이브러리2 ...
+
 from fastapi import FastAPI, Form
 import text_mining as tm
-
 app = FastAPI()
 
 # url: '/', method: 'get'으로 요청이 오면 index() 함수 실행

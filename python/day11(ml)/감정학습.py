@@ -1,13 +1,3 @@
-def init(java_home):
-    import jpype
-    import os
-    if jpype.isJVMStarted():
-        jpype.shutdownJVM()
-    os.environ['JAVA_HOME'] = java_home
- 
-
-init(r"C:\Program Files\Microsoft\jdk-17.0.18.8-hotspot\bin")
-
 #  konlpy를  import할 때 생기는 에러 처리를 위한 초기화
 # 설치할 라이브러리
 # pandas, scikit-learn, jpype1

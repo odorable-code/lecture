@@ -1,13 +1,3 @@
-def init(java_home):
-    import jpype
-    import os
-    if jpype.isJVMStarted():
-        jpype.shutdownJVM()
-    os.environ['JAVA_HOME'] = java_home
- 
-
-init(r"C:\Program Files\Microsoft\jdk-17.0.18.8-hotspot\bin")
-
 #  konlpy를  import할 때 생기는 에러 처리를 위한 초기화
 # 설치할 라이브러리
 # pandas, scikit-learn, jpype1
@@ -59,8 +49,8 @@ def predict(text):
 	
 if __name__ == '__main__':
     # print(text_preprocessing("오늘은 날이 너무 너무 좋습니다."))
-    df = pd.read_csv(r'sample.csv')
-    train_and_save_model(df['sentence'], df['label'])
-    print(predict('오늘은 날이 너무 너무 화창합니다'))
-    print(predict('날씨가 화창한데 자격증 시험에 떨어졌습니다.'))
-    print(predict('상사한테 혼났습니다.'))
+	df = pd.read_csv(r'sample.csv')
+	train_and_save_model(df['sentence'], df['label'])
+	print(predict('오늘은 날이 너무 너무 화창합니다'))
+	print(predict('날씨가 화창한데 자격증 시험에 떨어졌습니다.'))
+	print(predict('상사한테 혼났습니다.'))

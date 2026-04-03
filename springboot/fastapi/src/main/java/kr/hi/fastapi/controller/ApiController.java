@@ -2,12 +2,9 @@ package kr.hi.fastapi.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -15,26 +12,82 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ApiController {
+
     private final WebClient webClient;
 
-    @PostMapping("/proxy/text")
-    public ResponseEntity<?> proxyText(
-        @RequestParam("msg") String msg
+    @PostMapping("/image")
+    public String image(
+        @RequestParam("image") MultipartFile file
     ) {
-        MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
-        bodyBuilder.part("msg", msg);
-        String result = webClient.post().uri("/text")
-                // 첨부파일일때 필요
+        MultipartBodyBuilder bb = new MultipartBodyBuilder();
+        // 보낼 데이터를 추가
+        bb.part("msg","데이터 갔나요?");
+        bb.part("file", file.getResource());
+        System.out.println(file.getOriginalFilename());
+        return webClient.post().uri("/image" )
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                // 위에서 body build에 추가한 데이터를 묶어서 멀티파트데이터 형식으로 변환해서 추가
-                .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
-                // 서버에 요청을 보내고 응답을 받음
+                .body(BodyInserters.fromMultipartData(bb.build()))
                 .retrieve()
-                // 받아온 데이터를 지정한 타입으로 변환
                 .bodyToMono(String.class)
-                // 응답이 올때까지 기다림
                 .block();
 
-        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/text")
+    public String text(
+            @RequestParam("msg") String msg
+    ) {
+        MultipartBodyBuilder bb = new MultipartBodyBuilder();
+        // 보낼 데이터를 추가
+        bb.part("msg",msg);
+        return webClient.post().uri("/text")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(bb.build()))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+    }
+
+    @GetMapping("/movies")
+    public String movies() {
+        return webClient.get().uri("/movies")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    @GetMapping("/movies/recommend")
+    public String moviesRecommend(
+            @RequestParam("title") String title,
+            @RequestParam("type") String type
+    ) {
+        System.out.println(type);
+        MultipartBodyBuilder bb = new MultipartBodyBuilder();
+        bb.part("title", title);
+        bb.part("type", type);
+        return webClient.post().uri("/movies/recommend" )
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(bb.build()))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    @PostMapping("/fashion/predict")
+    public String fashionPredict(
+            @RequestParam("file") MultipartFile file
+    ) {
+        MultipartBodyBuilder bb = new MultipartBodyBuilder();
+        // 보낼 데이터를 추가
+        bb.part("file", file.getResource());
+
+        return webClient.post().uri("/fashion/predict" )
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(bb.build()))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
     }
 }
